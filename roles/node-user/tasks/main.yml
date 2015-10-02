@@ -1,0 +1,55 @@
+---
+
+- name: Disable SELINUX
+  selinux: state=disabled
+
+- name: Open the correct IPTables ports
+  lineinfile: dest=/etc/sysconfig/iptables
+              regexp="^-A INPUT -p {{item.protocol}} -m state --state NEW -m {{item.protocol}} --dport {{item.port}} -j ACCEPT$"
+              line="-A INPUT -p {{item.protocol}} -m state --state NEW -m {{item.protocol}} --dport {{item.port}} -j ACCEPT"
+              insertbefore="^-A INPUT -j REJECT --reject-with icmp-host-prohibited$"
+  with_items:
+        - { protocol: tcp, port: 80 }
+        - { protocol: tcp, port: 443 }
+        - { protocol: tcp, port: 389 }
+        - { protocol: tcp, port: 636 }
+        - { protocol: tcp, port: 88 }
+        - { protocol: tcp, port: 464 }
+        - { protocol: tcp, port: 53 }
+        - { protocol: tcp, port: 33001 }
+        - { protocol: tcp, port: 40001 }
+        - { protocol: tcp, port: 4406 }
+        - { protocol: tcp, port: 22 }
+        - { protocol: udp, port: 88 }
+        - { protocol: udp, port: 464 }
+        - { protocol: udp, port: 53 }
+        - { protocol: udp, port: 123 }
+        - { protocol: udp, port: 33001-33010 }
+  notify:
+        - restart iptables
+
+#Change defaults
+- name: Modify aspera.conf 
+	shell: {{ item }}
+	with_items:
+ 		- "asconfigurator -x "set_node_data;token_encryption_key,`uuidgen`""
+ 		- "asconfigurator -x "set_node_data;transfer_out_bandwidth_flow_target_rate_default,"{{ transfer_out_bandwidth_flow_target_rate_default }}"""
+ 		- "asconfigurator -x "set_node_data;transfer_in_bandwidth_flow_target_rate_default,"{{ transfer_in_bandwidth_flow_target_rate_default  }}"""
+ 		- "asconfigurator -x "set_central_server_data;persistent_store,enable""
+ 		- "asconfigurator -x "set_server_data;server_name,"{{ domain }}"""
+ 		- "asconfigurator -x "set_user_data;user_name,"{{ user_name }}";authorization_transfer_out_value,token""
+ 		- "asconfigurator -x "set_user_data;user_name,"{{ user_name }}";authorization_transfer_in_value,token""
+ 		- "asconfigurator -x "set_user_data;user_name,"{{ user_name }}";absolute,/data""
+
+- name: Create node user
+  user: name="{{ user_name }}" shell=/bin/aspshell state=present
+
+#This user now needs to use the SSH public key that matches the private key used by the Connect plugin. 
+#This involves placing the key in the authorized_keys file and making sure it is secure and readable by the user.
+- name: Setup authorized_keys
+  file: src=/opt/aspera/var/aspera_id_dsa.pub dest=/home/"{{ user_name }}"/.ssh/authorized_keys
+  file: src=/home/"{{ user_name }}"/.ssh owner="{{ user_name }}" group="{{ user_name }}" mode=0700
+  file: src=/home/"{{ user_name }}"/.ssh/authorized_keys mode=0600
+
+
+- file: path=/data owner="{{ user_name }}" group="{{ user_name }}" 

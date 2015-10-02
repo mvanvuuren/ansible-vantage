@@ -1,0 +1,19 @@
+---
+
+- include: install.yml
+  tags:
+    - ssh-install
+
+- include: config.yml
+  tags:
+    - ssh-config
+    - ssh-install
+
+# - include: known_hosts.yml
+#   tags:
+#     - ssh-known-hosts
+
+- include: service.yml
+  tags:
+    - ssh-install 
+    - ssh-service

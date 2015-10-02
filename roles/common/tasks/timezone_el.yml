@@ -1,0 +1,8 @@
+---
+
+
+- name: Set /etc/timezone to {{ timezone }}
+  template: dest=/etc/timezone src=timezone.j2
+  notify: restart ntp
+  when: ansible_os_family == "CentOS"
+  tags: [configuration,timezone]

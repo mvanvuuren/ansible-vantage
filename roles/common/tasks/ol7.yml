@@ -1,0 +1,21 @@
+---
+
+
+- name: Create etc/resolv.conf file
+  template: src=resolv.conf.j2 dest=/etc/resolv.conf
+
+- name: Install Apache
+  yum: name=httpd state=latest
+  notify: stop httpd
+
+- name: Install Perl
+  yum: name=perl state=latest
+
+- name: Install MySQL
+  yum: name={{ item.name }} enablerepo=ol7_MySQL56 state=latest
+  with_items:
+    - { name: mysql }
+    - { name: mysql-server }
+#  notify: Stop mysqld
+- service: name=mysqld state=started
+

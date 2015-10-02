@@ -1,0 +1,8 @@
+# This is the main playbook file for the common role
+---
+
+
+- hosts: all
+  roles:
+    - node_user
+    - { role: vantage-ssh, tags: [ 'ssh-config' ] }

@@ -1,0 +1,6 @@
+---
+
+dependencies:
+  - { role: vantage-ssh }
+#---
+#dependencies: []

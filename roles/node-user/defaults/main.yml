@@ -1,0 +1,11 @@
+---
+# For more information about default variables see:
+# http://www.ansibleworks.com/docs/playbooks_variables.html#id26
+#
+#
+#
+
+# What is your domain name
+domain: domain.com
+transfer_out_bandwidth_flow_target_rate_default: 20000
+transfer_in_bandwidth_flow_target_rate_default: 20000

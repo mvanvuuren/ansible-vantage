@@ -1,0 +1,8 @@
+---
+
+#build this in later
+- name: Registering known hosts
+  sshknownhosts:
+    host: "{{ item.name if item.name is defined else item }}"
+    dest: /etc/ssh/ssh_known_hosts
+  with_items: ssh_known_hosts

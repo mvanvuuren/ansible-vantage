@@ -1,0 +1,6 @@
+---
+
+- hosts: console
+  roles:
+    - aspera-console
+    - { role: vantage-ssh, tags: [ 'ssh-config' ] }

@@ -1,0 +1,13 @@
+---
+
+- hosts: all
+  sudo: yes
+  roles:
+    - vantage-ssh
+  vars:
+    ssh_port:
+      - 22
+      - 33001
+    ssh_permit_root_login: 'yes'
+    ssh_pubkey_authentication: 'yes'
+    ssh_password_authentication: 'yes'

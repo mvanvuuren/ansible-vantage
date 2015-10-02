@@ -1,0 +1,45 @@
+---
+
+
+- name: Disable SELINUX
+  selinux: state=disabled
+  notify: restart server
+
+- name: upgrade all packages
+  yum: name=* state=latest update_cache=yes
+
+- name: Install Apache
+  yum: name=httpd state=latest
+  notify: stop httpd
+
+- name: Install Perl
+  yum: name=perl state=latest
+
+- name: Install MySQL
+  yum: name={{ item.name }} state=latest
+  with_items:
+    - { name: mysql }
+    - { name: mysql-server }
+#  notify: Stop mysqld
+- service: name=mysqld state=started
+
+# - name: Update the kernel
+#   yum: >
+#     name=kernel
+#     state=latest
+#   register: kernel
+
+# - name: Restart machine
+#   shell: |
+#     shutdown -r now Ansible updates triggered
+#   async: 0
+#   poll: 0
+#   ignore_errors: true
+#   when: kernel|changed
+
+# - name: Waiting for server to come back
+#   local_action: >
+#     wait_for host={{ inventory_hostname }}
+#     state=started
+#   sudo: false
+#   when: kernel|changed

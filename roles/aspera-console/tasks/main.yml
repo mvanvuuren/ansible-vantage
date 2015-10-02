@@ -1,0 +1,18 @@
+---
+- name: Making sure services are disabled
+	  - name: Disable HTTPD
+	    service: name=httpd state=stopped
+	  - name: Disable MySQL
+	    service: name=mysql state=stopped
+
+- include: CentOS.yml
+  when: ansible_os_family == "CentOS"
+
+- include: RedHat.yml
+  when: ansible_os_family == "RedHat"
+
+- name: "Make sure httpd is running"
+  service: >
+    name=httpd
+    state=started
+    enabled=yes

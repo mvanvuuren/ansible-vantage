@@ -1,0 +1,7 @@
+# This is the main playbook file for the common role
+---
+
+
+- hosts: console
+  roles:
+    - common
