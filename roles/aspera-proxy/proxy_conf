@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<CONF version="2">
+	<server>
+		<rproxy>
+			<enabled>true</enabled>
+			<rules>
+				<rule host_domain="proxyhost.domainname.com">
+					<host>10.1.2.3:33001</host>
+					<squash_user>xfer</squash_user>
+					<keyfile>/opt/aspera/proxy/etc/ssh_keys/xfer_key</keyfile>
+					<src_port_filtering>false</src_port_filtering>
+				</rule>
+			</rules>
+		</rproxy>
+	</server>
+	<central_server>
+		<port>40001</port>
+		<address>127.0.0.1</address>
+	</central_server>
+	<default/>
+	<aaa/>
+</CONF>

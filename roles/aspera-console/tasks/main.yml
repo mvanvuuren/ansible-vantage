@@ -27,6 +27,7 @@
 - name: Install Aspera aspera-console
   yum: name=/root/aspera-console-3.0.2.111237-0.x86_64.rpm state=present
 
+#This needs to become a template
 - name: Open the correct IPTables ports
   lineinfile: dest=/etc/sysconfig/iptables
               regexp="^-A INPUT -p {{item.protocol}} -m state --state NEW -m {{item.protocol}} --dport {{item.port}} -j ACCEPT$"
