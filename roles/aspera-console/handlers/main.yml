@@ -1,10 +1,17 @@
 ---
 
+- name: restart iptables
+  service: name=iptables state=restarted
 
+- name: disable service httpd
+  service: name=httpd state=stopped
+
+- name: disable service mysql
+  service: name=mysqld state=stopped
+
+  
 - name: restart aspera services
-  service: >
-  		name="{{ item.name }}"
-  		state="restarted"
-  with_items: >
-  	- { name: asperahttpd }
-  	- { name: asperacentral }
+  service: name={{ item.name }} state=restarted
+  with_items: 
+    - { name: asperahttpd }
+    - { name: asperacentral }
