@@ -1,7 +1,7 @@
 ---
 
 #Change hostname to that of the console server.
-- hosts: console
+- hosts: vagrant
   roles:
     - { role: vantage-ssh, tags: [ 'ssh-config' ] }
     - aspera-console

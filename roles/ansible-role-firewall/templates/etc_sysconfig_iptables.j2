@@ -1,0 +1,53 @@
+{{ ansible managed }}
+# Firewall configuration written by system-config-firewall
+# Manual customization of this file is not recommended.
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+# all outgoing
+-A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+-A INPUT -p icmp -j ACCEPT
+# Accept traffic from loopback interface (localhost).
+iptables -A INPUT -i lo -j ACCEPT
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 22 -j ACCEPT
+
+# Forwarded ports. Can include this later
+#{# Add a rule for each forwarded port #}
+#{% for forwarded_port in firewall_forwarded_tcp_ports %}
+#iptables -t nat -I PREROUTING -p tcp --dport {{ forwarded_port.src }} -j REDIRECT --to-port {{ forwarded_port.dest }}
+#iptables -t nat -I OUTPUT -p tcp -o lo --dport {{ forwarded_port.src }} -j REDIRECT --to-port {{ forwarded_port.dest }}
+#{% endfor %}
+#{% for forwarded_port in firewall_forwarded_udp_ports %}
+#iptables -t nat -I PREROUTING -p udp --dport {{ forwarded_port.src }} -j REDIRECT --to-port {{ forwarded_port.dest }}
+#iptables -t nat -I OUTPUT -p udp -o lo --dport {{ forwarded_port.src }} -j REDIRECT --to-port {{ forwarded_port.dest }}
+#{% endfor %}
+
+# Open ports.
+{# Add a rule for each open port #}
+{% for port in firewall_allowed_tcp_ports %}
+iptables -A INPUT -p tcp -m tcp --dport {{ port }} -j ACCEPT
+{% endfor %}
+{% for port in firewall_allowed_udp_ports %}
+iptables -A INPUT -p udp -m udp --dport {{ port }} -j ACCEPT
+{% endfor %}
+
+# Additional custom rules.
+{% for rule in firewall_additional_rules %}
+{{ rule }}
+{% endfor %}
+
+# Log EVERYTHING (ONLY for Debug).
+-A INPUT -j LOG
+
+{% if firewall_log_dropped_packets %}
+# Log other incoming requests (all of which are dropped) at 15/minute max.
+-A INPUT -m limit --limit 15/minute -j LOG --log-level 7 --log-prefix "Dropped by firewall: "
+{% endif %}
+
+# Drop all other traffic.
+iptables -A INPUT -j DROP
+
+-A INPUT -j REJECT --reject-with icmp-host-prohibited
+-A FORWARD -j REJECT --reject-with icmp-host-prohibited
+COMMIT
