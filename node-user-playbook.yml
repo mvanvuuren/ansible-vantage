@@ -4,5 +4,5 @@
 
 - hosts: all
   roles:
-    - node_user
-    - { role: vantage-ssh, tags: [ 'ssh-config' ] }
+    - aspera_node_user
+    - { role: sshd-config, tags: [ 'ssh-config' ] }

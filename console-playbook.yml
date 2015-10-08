@@ -3,6 +3,6 @@
 #Change hostname to that of the console server.
 - hosts: vagrant
   roles:
-  	- ansible-role-firewall
-    - { role: vantage-ssh, tags: [ 'ssh-config' ] }
+  	- firewall
+    - { role: sshd-config, tags: [ 'ssh-config' ] }
     - aspera-console

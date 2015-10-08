@@ -4,4 +4,4 @@
 
 - hosts: centos
   roles:
-    - ansible-role-firewall
+    - firewall

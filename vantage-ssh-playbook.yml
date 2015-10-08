@@ -1,9 +1,10 @@
 ---
 
+
 - hosts: all
   sudo: yes
   roles:
-    - vantage-ssh
+    - sshd-config
   vars:
     ssh_port:
       - 22
